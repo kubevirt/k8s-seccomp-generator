@@ -29,6 +29,8 @@ spec:
           mountPath: /lib
         - name: etc
           mountPath: /etc
+      securityContext: 
+        privileged: true
 
 
 
