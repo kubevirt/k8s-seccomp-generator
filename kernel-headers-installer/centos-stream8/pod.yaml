@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata: 
-  name: kernel-headers-installer
+  name: falco-probe-configurer
 spec: 
   volumes:
     - name: var
@@ -17,6 +17,19 @@ spec:
       hostPath:
         path: /etc
   containers:
-    - name: 
+    - name: probe-loader
+      image: nithishdev/kernel-headers-installer:centos-stream8
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - name: var
+          mountPath: /var
+        - name: usr
+          mountPath: /usr
+        - name: lib
+          mountPath: /lib
+        - name: etc
+          mountPath: /etc
+
+
 
 
