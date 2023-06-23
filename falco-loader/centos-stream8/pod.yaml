@@ -18,7 +18,7 @@ spec:
         path: /etc
   containers:
     - name: probe-loader
-      image: nithishdev/kernel-headers-installer:centos-stream8
+      image: nithishdev/falco-loader:centos-stream8
       imagePullPolicy: IfNotPresent
       volumeMounts:
         - name: var
