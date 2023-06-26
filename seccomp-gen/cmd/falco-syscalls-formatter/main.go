@@ -32,9 +32,13 @@ func main() {
       select {
       case <-c:
         fmt.Println("Caught SIGINT, exiting...")
+        // write the syscalls to a data.json file
+        syscallData := make([]string, 0)
         for syscall := range syscallsMap {
-          fmt.Println(syscall)
+          syscallData = append(syscallData, syscall)
         }
+        file, _ := json.Marshal(syscallData)
+        _ = os.WriteFile("data.json", file, 0644)
         os.Exit(0)
       default:
         val := falcoOutput{}
