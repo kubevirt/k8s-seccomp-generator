@@ -19,7 +19,7 @@ spec:
   containers:
     - name: probe-loader
       image: nithishdev/falco-loader:centos-stream8
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
       volumeMounts:
         - name: var
           mountPath: /var

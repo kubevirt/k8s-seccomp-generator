@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 )
 
 func startTraceHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,6 +20,21 @@ func startTraceHandler(w http.ResponseWriter, r *http.Request) {
 	// 2. --k8s-api
 	// 3. --k8s-api-cert
 	// 4. --unbuffered
+  os.Setenv("FALCO_BPF_PROBE", "/falco/falco-bpf.o")
+  falcoCommand := exec.Command("/usr/bin/falco",
+    "-A",
+    "-U",
+    "-r", "/falco/rules.yaml", 
+    "-k", "https://$KUBERNETES_SERVICE_HOST",
+    "-K", "/var/run/secrets/kubernetes.io/serviceaccount/token",
+    "--option", "program_output.enabled=true",
+    "--option", "program_output.keep_alive=true",
+    "--option", "program_output.program=/falco/falco-syscalls-formatter",
+    "--option", "stdout_output.enabled=false",
+    "--option", "syslog_output.enabled=false",
+    "--option", "file_output.enabled=false",
+    "--option", "json_output=true",
+    )
 
 }
 
