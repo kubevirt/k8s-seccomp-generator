@@ -38,7 +38,7 @@ func main() {
           syscallData = append(syscallData, syscall)
         }
         file, _ := json.Marshal(syscallData)
-        _ = os.WriteFile("data.json", file, 0644)
+        _ = os.WriteFile("/falco/data.json", file, 0644)
         os.Exit(0)
       default:
         val := falcoOutput{}
