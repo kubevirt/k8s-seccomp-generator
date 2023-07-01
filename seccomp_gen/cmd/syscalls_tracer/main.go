@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -17,11 +18,13 @@ func startTraceHandler(t tracing.Tracer) func(w http.ResponseWriter, r *http.Req
   if err != nil {
       panic(err)
   }
+  fmt.Println("Received request to trace pod with name: ", traceConf.PodName)
   // set tracer config
   err = t.SetConfig(traceConf)
   if err != nil {
       panic(err)
   }
+  fmt.Println("Starting to trace syscalls...")
   // start tracer
   err = t.Start()
   if err != nil {
@@ -32,6 +35,7 @@ func startTraceHandler(t tracing.Tracer) func(w http.ResponseWriter, r *http.Req
 
 func stopTraceHandler(t tracing.Tracer) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
+  fmt.Println("Received request to stop tracing...")
 	// Stop falco and send the resultant syscalls data.json file
   err := t.Stop()
   if err != nil {
@@ -47,5 +51,6 @@ func main() {
   }
 	http.HandleFunc("/start", startTraceHandler(tracer))
 	http.HandleFunc("/stop", stopTraceHandler(tracer))
+  fmt.Println("Starting server at locahost:9842...")
 	log.Fatal(http.ListenAndServe(":9842", nil))
 }
