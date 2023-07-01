@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: syscalls-tracer
+  namespace: kubesecgen
+spec:
+  serviceAccountName: kubesecgen-sa
+  volumes:
+  - name: falco
+    hostPath: 
+      path: /usr/_falco
+  containers:
+  - name: syscalls-tracer
+    image: nithishdev/k8s-syscalls-tracer:latest
+    imagePullPolicy: IfNotPresent
+    stdin: true
+    tty: true
+    volumeMounts:
+    - name: falco 
+      mountPath: /falco
+    securityContext:
+      privileged: true
