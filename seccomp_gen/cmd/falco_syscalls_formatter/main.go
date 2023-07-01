@@ -24,26 +24,26 @@ type falcoOutput struct {
 
 
 func main() {
-  reader := bufio.NewReader(os.Stdin)
+  scanner := bufio.NewScanner(os.Stdin)
   syscallsMap := make(map[string]struct{})
   c := make(chan os.Signal, 1)
   signal.Notify(c, os.Interrupt)
-  for {
-      select {
-      case <-c:
-        fmt.Println("Caught SIGINT, exiting...")
-        // write the syscalls to a data.json file
-        syscallData := make([]string, 0)
-        for syscall := range syscallsMap {
-          syscallData = append(syscallData, syscall)
-        }
-        file, _ := json.Marshal(syscallData)
-        _ = os.WriteFile("/falco/data.json", file, 0644)
-        os.Exit(0)
-      default:
+  go func(c chan os.Signal){
+    <-c
+    fmt.Println("Caught SIGINT, exiting...")
+    // write the syscalls to a data.json file
+    syscallData := make([]string, 0)
+    for syscall := range syscallsMap {
+      syscallData = append(syscallData, syscall)
+    }
+    file, _ := json.Marshal(syscallData)
+    _ = os.WriteFile("/falco/data.json", file, 0644)
+    os.Exit(0)
+  }(c)
+  for scanner.Scan() {
         val := falcoOutput{}
-        text, _ := reader.ReadBytes('\n')
-        err := json.Unmarshal(text, &val)
+        text := scanner.Text()
+        err := json.Unmarshal([]byte(text), &val)
         if err != nil {
           fmt.Println("Error : ", err)
         }
@@ -51,8 +51,10 @@ func main() {
         if ok && syscall != "" {
           syscallsMap[syscall] = struct{}{}
         }
-      }
   }
+  if err := scanner.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "Error reading from stdin:", err)
+	}
 }
 
 
