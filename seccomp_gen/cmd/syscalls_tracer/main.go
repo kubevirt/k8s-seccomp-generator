@@ -17,7 +17,7 @@ func startTraceHandler(t tracing.Tracer) func(w http.ResponseWriter, r *http.Req
   if err != nil {
       panic(err)
   }
-  // set tracer confif
+  // set tracer config
   err = t.SetConfig(traceConf)
   if err != nil {
       panic(err)

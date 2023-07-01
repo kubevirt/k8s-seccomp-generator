@@ -10,7 +10,7 @@ type TracingConfiguration struct {
 }
 
 type Tracer struct { 
-  falcoProcess os.Process
+  falcoProcess *os.Process
   Config TracingConfiguration
 }
 
@@ -44,7 +44,7 @@ func (t *Tracer) Start() error {
     "-K", "/var/run/secrets/kubernetes.io/serviceaccount/token",
     "--option", "program_output.enabled=true",
     "--option", "program_output.keep_alive=true",
-    "--option", "program_output.program=/falco/falco-syscalls-formatter",
+    "--option", "program_output.program=/falco/formatter",
     "--option", "stdout_output.enabled=false",
     "--option", "syslog_output.enabled=false",
     "--option", "file_output.enabled=false",
@@ -55,7 +55,7 @@ func (t *Tracer) Start() error {
   if err != nil {
       return err
   }
-  t.falcoProcess = *falcoCommand.Process
+  t.falcoProcess = falcoCommand.Process
   return nil
 }
 
@@ -66,5 +66,6 @@ func (t *Tracer) Stop() error {
     return err
   }
   t.falcoProcess.Release()
+  t.falcoProcess = nil
   return nil
 }
