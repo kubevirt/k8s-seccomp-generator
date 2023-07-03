@@ -46,7 +46,7 @@ func (t *Tracer) Start() error {
     "--option", "program_output.enabled=true",
     "--option", "program_output.keep_alive=true",
     "--option", "program_output.program=/falco/formatter",
-    "--option", "stdout_output.enabled=false",
+    "--option", "stdout_output.enabled=true",
     "--option", "syslog_output.enabled=false",
     "--option", "file_output.enabled=false",
     "--option", "json_output=true",
