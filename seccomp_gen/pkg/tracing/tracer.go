@@ -1,6 +1,7 @@
 package tracing
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 )
@@ -61,7 +62,10 @@ func (t *Tracer) Start() error {
 
 // Stop the tracer by sending interrupt to the Falco process
 func (t *Tracer) Stop() error {
-  err := t.falcoProcess.Signal(os.Interrupt)
+  if t.falcoProcess == nil {
+    return fmt.Errorf("Process not found in the struct")
+  }
+  err := (*t.falcoProcess).Signal(os.Interrupt)
   if err != nil {
     return err
   }
