@@ -14,7 +14,8 @@ spec:
   containers:
   - name: syscalls-tracer
     image: nithishdev/k8s-syscalls-tracer:latest
-    imagePullPolicy: IfNotPresent
+      #imagePullPolicy: IfNotPresent
+    imagePullPolicy: Always
     stdin: true
     tty: true
     ports:

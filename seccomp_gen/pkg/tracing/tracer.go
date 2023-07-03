@@ -57,6 +57,7 @@ func (t *Tracer) Start() error {
       return err
   }
   t.falcoProcess = falcoCommand.Process
+  fmt.Println("Falco process struct value: ", t.falcoProcess, " and the value returned by c.Process: ", falcoCommand.Process)
   return nil
 }
 
