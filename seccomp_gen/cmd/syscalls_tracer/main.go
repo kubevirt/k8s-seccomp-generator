@@ -9,7 +9,7 @@ import (
 	tracing "github.com/sudo-NithishKarthik/syscalls-tracer/pkg/tracing"
 )
 
-func startTraceHandler(t tracing.Tracer) func(w http.ResponseWriter, r *http.Request) {
+func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
   // decode data from body
   decoder := json.NewDecoder(r.Body)
@@ -33,7 +33,7 @@ func startTraceHandler(t tracing.Tracer) func(w http.ResponseWriter, r *http.Req
   }
 }
 
-func stopTraceHandler(t tracing.Tracer) func(w http.ResponseWriter, r *http.Request) {
+func stopTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
   fmt.Println("Received request to stop tracing...")
 	// Stop falco and send the resultant syscalls data.json file
@@ -49,8 +49,8 @@ func main() {
   if err != nil {
       panic(err)
   }
-	http.HandleFunc("/start", startTraceHandler(tracer))
-	http.HandleFunc("/stop", stopTraceHandler(tracer))
+	http.HandleFunc("/start", startTraceHandler(&tracer))
+	http.HandleFunc("/stop", stopTraceHandler(&tracer))
   fmt.Println("Starting server at locahost:9842...")
 	log.Fatal(http.ListenAndServe(":9842", nil))
 }
