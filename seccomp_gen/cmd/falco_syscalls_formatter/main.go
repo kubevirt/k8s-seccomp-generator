@@ -25,11 +25,13 @@ type falcoOutput struct {
 
 
 func main() {
+  fmt.Println("Starting formatter...")
   scanner := bufio.NewScanner(os.Stdin)
   syscallsMap := make(map[string]struct{})
   c := make(chan os.Signal, 1)
   signal.Notify(c, os.Interrupt, syscall.SIGTERM, os.Kill)
   go func(c chan os.Signal){
+    fmt.Println("waiting for signal...")
     <-c
     fmt.Printf("Caught %v, exiting...", c)
     // write the syscalls to a data.json file
@@ -49,12 +51,13 @@ func main() {
           fmt.Println("Error : ", err)
         }
         syscall, ok :=  val.OutputFields["syscall.type"].(string)
+        fmt.Println("Received syscall: ", syscall)
         if ok && syscall != "" {
           syscallsMap[syscall] = struct{}{}
         }
   }
   if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "Error reading from stdin:", err)
+		fmt.Println("Error reading from stdin:", err)
 	}
 }
 
