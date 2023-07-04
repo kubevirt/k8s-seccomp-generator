@@ -52,6 +52,11 @@ func (t *Tracer) Start() error {
     "--option", "file_output.filename=/falco/logs.txt",
     "--option", "json_output=true",
     )
+  falcoCommand.Env = os.Environ()
+  falcoCommand.Env = append(falcoCommand.Env, "FALCO_BPF_PROBE=/falco/falco-bpf.o")
+  f, _ := os.Create("/falco/cmd_logs.txt")
+  falcoCommand.Stdout = f
+  falcoCommand.Stderr = f
   // we have to call Process.Release when stopping it
   err := falcoCommand.Start()
   if err != nil {
