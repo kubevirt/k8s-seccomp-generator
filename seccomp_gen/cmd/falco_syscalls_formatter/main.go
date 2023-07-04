@@ -28,12 +28,12 @@ func main() {
   fmt.Println("Starting formatter...")
   scanner := bufio.NewScanner(os.Stdin)
   syscallsMap := make(map[string]struct{})
-  c := make(chan os.Signal)
-  signal.Notify(c, os.Interrupt, syscall.SIGTERM, os.Kill)
+  c := make(chan os.Signal, 1)
+  signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
   go func(c chan os.Signal){
     fmt.Println("waiting for signal...")
-    <-c
-    fmt.Printf("Caught %v, exiting...", c)
+    sig := <-c
+    fmt.Printf("Caught %v, exiting...", sig)
     // write the syscalls to a data.json file
     syscallData := make([]string, 0)
     for syscall := range syscallsMap {

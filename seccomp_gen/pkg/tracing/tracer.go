@@ -80,7 +80,7 @@ func (t *Tracer) Stop() error {
   if err != nil {
     return err
   }
-  // t.falcoProcess.Release()
+  t.falcoProcess.Release()
   t.falcoProcess = nil
   return nil
 }
