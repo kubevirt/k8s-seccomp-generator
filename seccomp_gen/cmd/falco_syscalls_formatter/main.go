@@ -28,7 +28,7 @@ func main() {
   fmt.Println("Starting formatter...")
   scanner := bufio.NewScanner(os.Stdin)
   syscallsMap := make(map[string]struct{})
-  c := make(chan os.Signal, 1)
+  c := make(chan os.Signal)
   signal.Notify(c, os.Interrupt, syscall.SIGTERM, os.Kill)
   go func(c chan os.Signal){
     fmt.Println("waiting for signal...")
@@ -51,8 +51,8 @@ func main() {
           fmt.Println("Error : ", err)
         }
         syscall, ok :=  val.OutputFields["syscall.type"].(string)
-        fmt.Println("Received syscall: ", syscall)
         if ok && syscall != "" {
+        fmt.Println("Received syscall: ", syscall)
           syscallsMap[syscall] = struct{}{}
         }
   }
