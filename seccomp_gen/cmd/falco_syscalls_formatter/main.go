@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 /*
@@ -27,10 +28,10 @@ func main() {
   scanner := bufio.NewScanner(os.Stdin)
   syscallsMap := make(map[string]struct{})
   c := make(chan os.Signal, 1)
-  signal.Notify(c, os.Interrupt)
+  signal.Notify(c, os.Interrupt, syscall.SIGTERM, os.Kill)
   go func(c chan os.Signal){
     <-c
-    fmt.Println("Caught SIGINT, exiting...")
+    fmt.Printf("Caught %v, exiting...", c)
     // write the syscalls to a data.json file
     syscallData := make([]string, 0)
     for syscall := range syscallsMap {
