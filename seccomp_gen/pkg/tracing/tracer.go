@@ -37,11 +37,15 @@ func (t *Tracer) SetConfig(config TracingConfiguration) error {
 
 // Start Falco process and update the struct with the falco process
 func (t *Tracer) Start() error {
+  khost := os.Getenv("KUBERNETES_SERVICE_HOST")
+  if khost == "" {
+    return fmt.Errorf("KUBERNETES_SERVICE_HOST not set")
+  }
   falcoCommand := exec.Command("/usr/bin/falco",
     "-A",
     "-U",
     "-r", "/falco/rules.yaml", 
-    "-k", "https://$KUBERNETES_SERVICE_HOST",
+    "-k", "https://"+khost,
     "-K", "/var/run/secrets/kubernetes.io/serviceaccount/token",
     "--option", "program_output.enabled=true",
     "--option", "program_output.keep_alive=true",
