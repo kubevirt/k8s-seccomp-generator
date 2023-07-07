@@ -14,7 +14,13 @@ type falcoRule struct {
 
 // CreateFalcoRule generates a Falco rule from the TracingConfiguration
 func CreateFalcoRule(t TracingConfiguration) ([]byte, error) {
-  condition := "k8s.pod.name="+t.PodName
+  var condition string
+  if t.PodName != "" {
+  condition = "k8s.pod.name="+t.PodName
+  }
+  if t.ContainerName != ""{
+  condition = "container.name="+t.ContainerName
+  }
   rules := make([]falcoRule, 0)
   rules = append(rules, falcoRule{
     Rule: "ksecgenRule",

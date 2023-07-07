@@ -8,6 +8,7 @@ import (
 
 type TracingConfiguration struct {
   PodName string `json:"podName"`
+  ContainerName string `json:"containerName"`
 }
 
 type Tracer struct { 
@@ -47,6 +48,8 @@ func (t *Tracer) Start() error {
     "-r", "/falco/rules.yaml", 
     "-k", "https://"+khost,
     "-K", "/var/run/secrets/kubernetes.io/serviceaccount/token",
+    // TODO: What if crio is not used?
+    "--cri", "/var/run/crio/crio.sock", 
     "--option", "program_output.enabled=true",
     "--option", "program_output.keep_alive=true",
     "--option", "program_output.program=/falco/formatter",
