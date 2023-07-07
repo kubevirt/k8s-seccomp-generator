@@ -16,18 +16,21 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
   var traceConf tracing.TracingConfiguration
   err := decoder.Decode(&traceConf)
   if err != nil {
-      panic(err)
+      fmt.Printf("Unable to unmarshal the JSON config: %s", err)
+      return
   }
-  fmt.Println("Received request to trace pod with name: ", traceConf.PodName)
+  fmt.Println("Received request to trace pod...")
   // set tracer config
   err = t.SetConfig(traceConf)
   if err != nil {
-      panic(err)
+      fmt.Printf("Unable to create falco rule from the config: %s", err)
+      return
   }
   fmt.Println("Starting to trace syscalls...")
   // start tracer
   err = t.Start()
   if err != nil {
+      fmt.Printf("Unable to start tracer: %s", err)
       panic(err)
   }
   }
