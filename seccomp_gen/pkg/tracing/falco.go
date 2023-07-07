@@ -21,6 +21,14 @@ func CreateFalcoRule(t TracingConfiguration) ([]byte, error) {
   if t.ContainerName != ""{
   condition = "container.name="+t.ContainerName
   }
+  if t.PodLabel != nil {
+    var lbl, val string
+    for k,v := range t.PodLabel {
+      lbl = k
+      val = v
+    }
+    condition ="k8s.pod.label."+lbl+"="+val
+  }
   rules := make([]falcoRule, 0)
   rules = append(rules, falcoRule{
     Rule: "ksecgenRule",

@@ -9,6 +9,7 @@ import (
 type TracingConfiguration struct {
   PodName string `json:"podName"`
   ContainerName string `json:"containerName"`
+  PodLabel map[string]string `json:"podLabel"`
 }
 
 type Tracer struct { 
