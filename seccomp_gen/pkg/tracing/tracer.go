@@ -6,6 +6,12 @@ import (
 	"os/exec"
 )
 
+/*
+ * /falco/rules.yaml - file that falco uses to get the rules 
+ * /falco/data.json - traced syscalls list are stored here
+ * /falco/logs.txt - falco logs are stored here (this includes the logs from the `formatter` binary)
+*/
+
 type TracingConfiguration struct {
   PodName string `json:"podName"`
   ContainerName string `json:"containerName"`
@@ -23,7 +29,7 @@ func NewTracer() (Tracer, error) {
 }
 
 
-func (t *Tracer) SetConfig(config TracingConfiguration) error {
+func (t *Tracer) UpdateConfig(config TracingConfiguration) error {
   t.Config = config
   rule, err := CreateFalcoRule(config)
   if err != nil {
@@ -44,7 +50,9 @@ func (t *Tracer) Start() error {
     return fmt.Errorf("KUBERNETES_SERVICE_HOST not set")
   }
   falcoCommand := exec.Command("/usr/bin/falco",
+    // to get support for all available syscalls
     "-A",
+    // unbuffered makes sure that we don't lose any syscalls
     "-U",
     "-r", "/falco/rules.yaml", 
     "-k", "https://"+khost,
@@ -56,13 +64,12 @@ func (t *Tracer) Start() error {
     "--option", "program_output.program=/falco/formatter",
     "--option", "stdout_output.enabled=false",
     "--option", "syslog_output.enabled=false",
-    "--option", "file_output.enabled=true",
-    "--option", "file_output.filename=/falco/logs.txt",
+    "--option", "file_output.enabled=false",
     "--option", "json_output=true",
     )
   falcoCommand.Env = os.Environ()
   falcoCommand.Env = append(falcoCommand.Env, "FALCO_BPF_PROBE=/falco/falco-bpf.o")
-  f, _ := os.Create("/falco/cmd_logs.txt")
+  f, _ := os.Create("/falco/logs.txt")
   falcoCommand.Stdout = f
   falcoCommand.Stderr = f
   // we have to call Process.Release when stopping it
@@ -71,7 +78,6 @@ func (t *Tracer) Start() error {
       return err
   }
   t.falcoProcess = falcoCommand.Process
-  fmt.Println("Falco process struct value: ", t.falcoProcess, " and the value returned by c.Process: ", falcoCommand.Process)
   return nil
 }
 

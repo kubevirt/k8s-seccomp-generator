@@ -19,9 +19,9 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
       fmt.Printf("Unable to unmarshal the JSON config: %s", err)
       return
   }
-  fmt.Println("Received request to trace pod...")
+  fmt.Println("Updating tracing configuration...")
   // set tracer config
-  err = t.SetConfig(traceConf)
+  err = t.UpdateConfig(traceConf)
   if err != nil {
       fmt.Printf("Unable to create falco rule from the config: %s", err)
       return
@@ -41,7 +41,6 @@ func stopTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Req
   fmt.Println("Received request to stop tracing...")
 	// Stop falco 
   err := t.Stop()
- // send the resultant syscalls data.json file
   if err != nil {
       panic(err)
   }
