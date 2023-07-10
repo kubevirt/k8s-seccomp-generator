@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata: 
-  name: falco-probe-configurer
+  name: falco-loader
 spec: 
   volumes:
     - name: var
