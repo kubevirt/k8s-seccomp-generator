@@ -39,12 +39,17 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
 func stopTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
   fmt.Println("Received request to stop tracing...")
-	// Stop falco and send the resultant syscalls data.json file
+	// Stop falco 
   err := t.Stop()
+ // send the resultant syscalls data.json file
   if err != nil {
       panic(err)
   }
   }
+}
+
+func syscallsDataHandler(w http.ResponseWriter, r *http.Request) {
+  http.ServeFile(w, r, "/falco/data.json")
 }
 
 func main() {
@@ -54,6 +59,7 @@ func main() {
   }
 	http.HandleFunc("/start", startTraceHandler(&tracer))
 	http.HandleFunc("/stop", stopTraceHandler(&tracer))
+	http.HandleFunc("/data.json", syscallsDataHandler)
   fmt.Println("Starting server at locahost:9842...")
 	log.Fatal(http.ListenAndServe(":9842", nil))
 }
