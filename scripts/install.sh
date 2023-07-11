@@ -4,7 +4,7 @@ if [ -z "$1" ]
     echo "Please specify the OS distribution of the node"
 fi
 nodeos="$1"
-kubectl apply -f falco_loader/$nodeos/falco_loader_pod.yaml
+kubectl apply -f ../install/falco_loader/$nodeos/falco_loader_pod.yaml
 if [ $? -ne 0 ]; then
   exit 1
 fi
