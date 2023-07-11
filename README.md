@@ -31,7 +31,7 @@ To install the Kubernetes Seccomp Generator, follow these steps:
    ```
 3. Deploy the required components on the cluster:
    ```bash
-   install/install.sh $nodeos
+   scripts/install.sh $nodeos
    ```
 
    $nodeos here should be the OS distribution your nodes on the cluster uses. This tool currently only supports `centos-stream8`
