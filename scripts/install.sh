@@ -4,6 +4,16 @@ if [ -z "$1" ]
     echo "Please specify the OS distribution of the node"
 fi
 nodeos="$1"
+case nodeos in
+  centos-stream8)
+    echo -n "OS Distribution Selected: centos-stream8"
+    ;;
+
+  *)
+    printf "Invalid OS Distrbution. \nSupported distributions:\n    1.centos-stream8"
+    exit 1
+    ;;
+esac
 kubectl apply -f ../install/falco_loader/$nodeos/falco_loader_pod.yaml
 if [ $? -ne 0 ]; then
   exit 1
@@ -16,10 +26,6 @@ fi
 
 echo "Starting syscalls tracer..."
 kubectl create ns kubesecgen
-kubectl apply -f ../install/clusterrole.yaml
-kubectl apply -f ../install/serviceaccount.yaml
-kubectl apply -f ../install/clusterrolebinding.yaml
-kubectl apply -f ../install/syscalls-tracer-pod.yaml
-kubectl apply -f ../install/syscalls-tracer-service.yaml
+kubectl apply -f ../install
 kubectl get service/syscalls-tracer -n kubesecgen
 
