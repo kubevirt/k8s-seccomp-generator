@@ -55,7 +55,9 @@ func (t *Tracer) Start() error {
 		"-r", "/falco/rules.yaml",
 		"-k", "https://"+khost,
 		"-K", "/var/run/secrets/kubernetes.io/serviceaccount/token",
-		// TODO: What if crio is not used?
+		// Uses the specified socket to fetch data from a CRI-compatible 
+    // runtime. If not specified, uses the libs default. This option can be passed multiple times to specify 
+    // socket to be tried until a successful one is found.
 		"--cri", "/var/run/crio/crio.sock",
 		"--option", "program_output.enabled=true",
 		"--option", "program_output.keep_alive=true",
