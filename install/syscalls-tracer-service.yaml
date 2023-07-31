@@ -10,5 +10,5 @@ spec:
   ports:
   - name: syscalls-tracer-server
     protocol: TCP
-    port: 9842
-    targetPort: 9842
+    port: 98429
+    targetPort: 98429
