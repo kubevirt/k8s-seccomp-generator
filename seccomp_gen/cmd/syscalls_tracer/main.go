@@ -60,5 +60,5 @@ func main() {
 	http.HandleFunc("/stop", stopTraceHandler(&tracer))
 	http.HandleFunc("/data.json", syscallsDataHandler)
 	fmt.Println("Starting server at locahost:9842...")
-	log.Fatal(http.ListenAndServe(":98429", nil))
+	log.Fatal(http.ListenAndServe(":9842", nil))
 }
