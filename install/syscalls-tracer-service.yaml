@@ -10,5 +10,6 @@ spec:
   ports:
   - name: syscalls-tracer-server
     protocol: TCP
-    port: 98429
-    targetPort: 98429
+    port: 9842
+    targetPort: 9842
+    nodePort: 30001

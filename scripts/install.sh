@@ -4,11 +4,10 @@ if [ -z "$1" ]
     echo "Please specify the OS distribution of the node"
 fi
 nodeos="$1"
-case nodeos in
-  centos-stream8)
+case "$1" in
+  'centos-stream8')
     echo -n "OS Distribution Selected: centos-stream8"
     ;;
-
   *)
     printf "Invalid OS Distrbution. \nSupported distributions:\n    1.centos-stream8"
     exit 1

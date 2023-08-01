@@ -19,7 +19,7 @@ spec:
     stdin: true
     tty: true
     ports:
-    - containerPort: 98429
+    - containerPort: 9842
     volumeMounts:
     - name: falco 
       mountPath: /falco
