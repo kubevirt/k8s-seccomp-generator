@@ -45,6 +45,7 @@ func NewInstallCommand() *cobra.Command {
       if err != nil {
         panic(err.Error())
       }
+      // delete the job
       fmt.Println("Loader job is complete.")
       // install all the manifests in the `install` directory
 		},
