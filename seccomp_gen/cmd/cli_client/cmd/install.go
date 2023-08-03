@@ -11,9 +11,6 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
-// we need a package that is responsible for installation of the tool in the kuberetes cluster
-// this package is scoped to the cli_client?
-
 func NewInstallCommand() *cobra.Command {
 	var installCmd = &cobra.Command{
 		Use:   "install",
@@ -21,10 +18,8 @@ func NewInstallCommand() *cobra.Command {
 		Long:  `Install the application`,
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("installing the application...")
-
       distro := install.DistroFromString(args[0])
       fmt.Println("Selected Distro: ", distro.String())
-
 			// see if the kubeconfig path is given in the flag
 			kubeconfig, err := cmd.Flags().GetString("kube-config")
       if err != nil {
@@ -40,14 +35,19 @@ func NewInstallCommand() *cobra.Command {
       if err != nil {
         panic(err.Error())
       }
+      
       // deploy and wait for the loader job to complete
-      err = install.DeployLoaderJob(clientset, distro)
+      err = install.ConfigureNodes(clientset, distro)
       if err != nil {
         panic(err.Error())
       }
-      // delete the job
       fmt.Println("Loader job is complete.")
-      // install all the manifests in the `install` directory
+      // install tracer component manifests
+      install.DeployTracerComponents(clientset)
+      if err != nil {
+        panic(err.Error())
+      }
+      fmt.Println("Successfully deployed tracer components...")
 		},
 		Args: func(cmd *cobra.Command, args []string) error {
 			// Exactly one arg should be present, not less and not more

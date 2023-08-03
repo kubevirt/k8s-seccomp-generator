@@ -14,7 +14,10 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func DeployLoaderJob(clientset *kubernetes.Clientset, distro Distro) error {
+
+// configures the nodes by deploying the `loader` manifest on the nodes and delete
+// them after configuring
+func ConfigureNodes(clientset *kubernetes.Clientset, distro Distro) error {
 	// apply the loader job to the cluster
 	loaderJob := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
@@ -62,16 +65,19 @@ func DeployLoaderJob(clientset *kubernetes.Clientset, distro Distro) error {
 			},
 		},
 	}
-
 	fmt.Println("Deploying the `loader job...")
-	_, err := clientset.BatchV1().Jobs("default").Create(context.TODO(), loaderJob, metav1.CreateOptions{})
+	job, err := clientset.BatchV1().Jobs("default").Create(context.TODO(), loaderJob, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("Cannot deploy the loader job: %s", err.Error())
 	}
 	fmt.Println("Waiting for the `loader` job to complete. This might take up to 6 mins...")
-	// wait till the falco-loader pod reaches the `completed` or `crash-loop backoff` state
   // TODO: Make sure there are no edge cases which leads to waiting forever
-	waitForJobToComplete("loader-job", clientset)
-
+	waitForJob("loader-job", clientset)
+  // delete the job after completion 
+  deletePolicy := metav1.DeletePropagationBackground
+  err = clientset.BatchV1().Jobs("default").Delete(context.TODO(), job.ObjectMeta.Name, metav1.DeleteOptions{PropagationPolicy: &deletePolicy })
+	if err != nil {
+		fmt.Printf("Cannot delete the loader job: %s", err.Error())
+	}
 	return nil
 }
