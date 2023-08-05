@@ -34,7 +34,7 @@ func init() {
 	viper.SetDefault("author", "Nithish Karthik nithishkarthik01@gmail.com")
 	viper.SetDefault("license", "apache")
 
-	rootCmd.AddCommand(NewInstallCommand())
+	rootCmd.AddCommand(NewInstallCommand(), NewTraceCommand())
 }
 
 func initConfig() {

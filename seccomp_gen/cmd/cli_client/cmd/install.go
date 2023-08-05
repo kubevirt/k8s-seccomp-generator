@@ -35,19 +35,18 @@ func NewInstallCommand() *cobra.Command {
       if err != nil {
         panic(err.Error())
       }
-      
       // deploy and wait for the loader job to complete
       err = install.ConfigureNodes(clientset, distro)
       if err != nil {
         panic(err.Error())
       }
-      fmt.Println("Loader job is complete.")
+      fmt.Println("Nodes have been configured.")
       // install tracer component manifests
       err = install.DeployTracerComponents(clientset)
       if err != nil {
         panic(err.Error())
       }
-      fmt.Println("Successfully deployed tracer components...")
+      fmt.Println("Successfully deployed tracer components.")
 		},
 		Args: func(cmd *cobra.Command, args []string) error {
 			// Exactly one arg should be present, not less and not more
@@ -60,6 +59,7 @@ func NewInstallCommand() *cobra.Command {
 					return nil
 				}
 			}
+      // TODO: Show the list of supported distros as well
 			return fmt.Errorf("Given OS distribution '%s' is invalid (or) not yet supported.", args[0])
 		},
 	}
