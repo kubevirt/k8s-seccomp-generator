@@ -2,10 +2,10 @@ package install
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
-	"gopkg.in/yaml.v2"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -20,50 +20,48 @@ func DeployTracerComponents(clientset *kubernetes.Clientset) error {
   var tracerPod corev1.Pod
   var tracerService corev1.Service
 
-  installDir := "../../install/"
+  installDir := "../../../install/"
 
-  clusterRoleMan, err := os.ReadFile(installDir+"clusterrole.yaml")
+  clusterRoleMan, err := os.ReadFile(installDir+"clusterrole.json")
   if err != nil {
     return fmt.Errorf("Cannot read file: %s", err.Error())
   }
-  err = yaml.Unmarshal(clusterRoleMan, &clusterRole)
+  err = json.Unmarshal(clusterRoleMan, &clusterRole)
   if err != nil {
     return fmt.Errorf("Cannot Unmarshal yaml file: %s", err.Error())
   }
-  clusterRoleBindingMan, err := os.ReadFile(installDir+"clusterrolebinding.yaml")
+  clusterRoleBindingMan, err := os.ReadFile(installDir+"clusterrolebinding.json")
   if err != nil {
     return fmt.Errorf("Cannot read file: %s", err.Error())
   }
-  err = yaml.Unmarshal(clusterRoleBindingMan, &clusterRoleBinding)
+  err = json.Unmarshal(clusterRoleBindingMan, &clusterRoleBinding)
   if err != nil {
-    return fmt.Errorf("Cannot Unmarshal yaml file: %s", err.Error())
+    return fmt.Errorf("Cannot Unmarshal json file: %s", err.Error())
   }
-  serviceAccountMan, err := os.ReadFile(installDir+"serviceaccount.yaml")
-  if err != nil {
-    return fmt.Errorf("Cannot read file: %s", err.Error())
-  }
-  err = yaml.Unmarshal(serviceAccountMan, &serviceAccount)
-  if err != nil {
-    return fmt.Errorf("Cannot Unmarshal yaml file: %s", err.Error())
-  }
-  tracerPodMan, err := os.ReadFile(installDir+"syscalls-tracer-pod.yaml")
+  serviceAccountMan, err := os.ReadFile(installDir+"serviceaccount.json")
   if err != nil {
     return fmt.Errorf("Cannot read file: %s", err.Error())
   }
-  err = yaml.Unmarshal(tracerPodMan, &tracerPod)
+  err = json.Unmarshal(serviceAccountMan, &serviceAccount)
   if err != nil {
-    return fmt.Errorf("Cannot Unmarshal yaml file: %s", err.Error())
+    return fmt.Errorf("Cannot Unmarshal json file: %s", err.Error())
   }
-  tracerServiceMan, err := os.ReadFile(installDir+"syscalls-tracer-service.yaml")
+  tracerPodMan, err := os.ReadFile(installDir+"syscalls-tracer-pod.json")
   if err != nil {
     return fmt.Errorf("Cannot read file: %s", err.Error())
   }
-  err = yaml.Unmarshal(tracerServiceMan, &tracerService)
+  err = json.Unmarshal(tracerPodMan, &tracerPod)
   if err != nil {
-    return fmt.Errorf("Cannot Unmarshal yaml file: %s", err.Error())
+    return fmt.Errorf("Cannot Unmarshal json file: %s", err.Error())
   }
-
-
+  tracerServiceMan, err := os.ReadFile(installDir+"syscalls-tracer-service.json")
+  if err != nil {
+    return fmt.Errorf("Cannot read file: %s", err.Error())
+  }
+  err = json.Unmarshal(tracerServiceMan, &tracerService)
+  if err != nil {
+    return fmt.Errorf("Cannot Unmarshal json file: %s", err.Error())
+  }
   fmt.Println("Deploying tracer components...")
   namespace := "kubesecgen"
   clientset.CoreV1().Namespaces().Create(context.TODO(), &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: namespace}}, metav1.CreateOptions{})

@@ -43,7 +43,7 @@ func NewInstallCommand() *cobra.Command {
       }
       fmt.Println("Loader job is complete.")
       // install tracer component manifests
-      install.DeployTracerComponents(clientset)
+      err = install.DeployTracerComponents(clientset)
       if err != nil {
         panic(err.Error())
       }
