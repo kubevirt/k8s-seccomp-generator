@@ -21,7 +21,8 @@ type TracingConfiguration struct {
 type Tracer struct {
 	falcoProcess *os.Process
 	Config       TracingConfiguration
-}
+  IsTracing    bool
+} 
 
 func NewTracer() (Tracer, error) {
 	return Tracer{}, nil
@@ -78,6 +79,7 @@ func (t *Tracer) Start() error {
 }
 
 // Stop the tracer by sending interrupt to the Falco process
+// TODO: Make sure that this kills both the processes (falco and formatter)
 func (t *Tracer) Stop() error {
 	if t.falcoProcess == nil {
 		return fmt.Errorf("Process not found in the struct")

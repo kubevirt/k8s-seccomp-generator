@@ -26,6 +26,16 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
 			fmt.Printf("Unable to create falco rule from the config: %s", err)
 			return
 		}
+    // verify that there are no running traces
+    /**
+     * We can have multiple falco processes running simultaneously tracing 
+     * multiple different entities. Therefore, we should be able to support tracing
+     * multiple entities at the same time. But we will keep things simple for now a
+     * and don't allow multiple simultaneous traces.
+    **/
+    if t.IsTracing {
+      panic(fmt.Errorf("There is a trace running already. Multiple simultaneous tracing is not yet supported."))
+    }
 		fmt.Println("Starting to trace syscalls...")
 		// start tracer
 		err = t.Start()
@@ -33,6 +43,7 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
 			fmt.Printf("Unable to start tracer: %s", err)
 			panic(err)
 		}
+    t.IsTracing = true
 	}
 }
 
@@ -44,6 +55,7 @@ func stopTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Req
 		if err != nil {
 			panic(err)
 		}
+    t.IsTracing = false
 	}
 }
 
