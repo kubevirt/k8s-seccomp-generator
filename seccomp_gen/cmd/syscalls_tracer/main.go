@@ -16,14 +16,16 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
 		var traceConf tracing.TracingConfiguration
 		err := decoder.Decode(&traceConf)
 		if err != nil {
-			fmt.Printf("Unable to unmarshal the JSON config: %s", err)
+      e := fmt.Sprintf( "Unable to unmarshal the JSON config: %s", err)
+      http.Error(w, e, 400)
 			return
 		}
 		fmt.Println("Updating tracing configuration...")
 		// set tracer config
 		err = t.UpdateConfig(traceConf)
 		if err != nil {
-			fmt.Printf("Unable to create falco rule from the config: %s", err)
+      e := fmt.Sprintf("Unable to create falco rule from the config: %s", err)
+      http.Error(w, e, 500)
 			return
 		}
     // verify that there are no running traces
@@ -34,14 +36,17 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
      * and don't allow multiple simultaneous traces.
     **/
     if t.IsTracing {
-      panic(fmt.Errorf("There is a trace running already. Multiple simultaneous tracing is not yet supported."))
+      e := fmt.Sprintf("There is a trace running already. Multiple simultaneous tracing is not yet supported.")
+      http.Error(w, e, 500)
+      return
     }
 		fmt.Println("Starting to trace syscalls...")
 		// start tracer
 		err = t.Start()
 		if err != nil {
-			fmt.Printf("Unable to start tracer: %s", err)
-			panic(err)
+      e := fmt.Sprintf("Unable to start tracer: %s", err)
+      http.Error(w, e, 500)
+      return
 		}
     t.IsTracing = true
 	}
