@@ -49,6 +49,7 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
       return
 		}
     t.IsTracing = true
+    fmt.Fprint(w, "Successfully started tracing")
 	}
 }
 
@@ -61,6 +62,7 @@ func stopTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Req
 			panic(err)
 		}
     t.IsTracing = false
+    fmt.Fprint(w, "Successfully stopped tracing")
 	}
 }
 

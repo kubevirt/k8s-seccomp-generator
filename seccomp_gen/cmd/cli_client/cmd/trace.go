@@ -1,6 +1,17 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"regexp"
+	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/sudo-NithishKarthik/syscalls-tracer/pkg/tracing"
+)
 
 var traceCommand = &cobra.Command{
 		Use:   "trace",
@@ -8,8 +19,7 @@ var traceCommand = &cobra.Command{
 		Long:  `Trace the syscalls made by kubernetes pods`,
 	}
 
-// We cannot store the map in-memory and hence we have to persist it in a file.
-// This seems a bit too much for now. So we don't implement it now. 
+// TO BE IMPLEMENTED LATER
 func NewTraceAddCommand() *cobra.Command {
 var addCommand = &cobra.Command{
 		Use:   "configure",
@@ -20,12 +30,10 @@ var addCommand = &cobra.Command{
     // this can also be used to update an existing entry of the map
 		},
 		Args: func(cmd *cobra.Command, args []string) error {
-      // here we have to verify the selectors
+      
 			return nil
 		},
 	}
-
-	
   return addCommand
 }
 
@@ -49,10 +57,63 @@ var startCommand = &cobra.Command{
     // starting the trace.
      
     // 1. Use the $selector to generate tracing.TracingConfiguration
+     selector := args[0]
+     tracingConf := tracing.TracingConfiguration{}
+      if strings.Contains(selector, "pod.name=") {
+        parts := strings.Split(selector, "=")
+        tracingConf.PodName= parts[1]
+      }
+      if strings.Contains(selector, "container.name=") {
+        parts := strings.Split(selector, "=")
+        tracingConf.ContainerName= parts[1]
+      }
+      if strings.Contains(selector, "pod.label.") {
+        labelValuePair := selector[10:]
+        parts := strings.Split(labelValuePair, "=")
+        tracingConf.PodLabel = map[string]string{
+          parts[0] : parts[1],
+        }
+      }
     // 2. Send a request to localhost:30001/start with the tracing configuration as the body
+      jsonBody, err := json.Marshal(tracingConf)
+      if err != nil {
+        fmt.Println("Cannot marshal the tracing configuration: ", err) 
+        return
+      }
+      request, err := http.NewRequest("POST", "http://localhost:30001/start", bytes.NewBuffer(jsonBody))
+      if err != nil {
+        fmt.Println("Cannot form the request: ", err) 
+        return
+      }
+      request.Header.Set("Content-Type", "application/json; charset=UTF-8")
+      client := &http.Client{}
+      response, err := client.Do(request)
+      if err != nil {
+        fmt.Println("Cannot send the request: ", err) 
+        return
+      }
+      defer response.Body.Close()
+      body, _ := io.ReadAll(response.Body)
+      fmt.Println("response Body:", string(body))
 		},
 		Args: func(cmd *cobra.Command, args []string) error {
       // we need to verify whether the $selector is valid
+      // Exactly one arg should be present, not less and not more
+			if len(args) != 1 || args[0] == ""{
+				return fmt.Errorf("selector must be present as the argument.")
+			}
+      // Supported selector types:
+      // pod.name=$name
+      // container.name=$name
+      // pod.label.$label=$value
+      exp, err := regexp.Compile("(^pod.name=)|(^pod.label.)|(^container.name=)")
+      if err != nil{
+        return fmt.Errorf("Regex error: %s", err)
+      }
+      res := exp.FindString(args[0])
+      if res == "" {
+        return fmt.Errorf("The selector provided: %s is invalid.", args[0])
+      }
 			return nil
 		},
 	}
