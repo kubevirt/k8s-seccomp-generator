@@ -16,40 +16,40 @@ func startTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Re
 		var traceConf tracing.TracingConfiguration
 		err := decoder.Decode(&traceConf)
 		if err != nil {
-      e := fmt.Sprintf( "Unable to unmarshal the JSON config: %s", err)
-      http.Error(w, e, 400)
+			e := fmt.Sprintf("Unable to unmarshal the JSON config: %s", err)
+			http.Error(w, e, 400)
 			return
 		}
 		fmt.Println("Updating tracing configuration...")
 		// set tracer config
 		err = t.UpdateConfig(traceConf)
 		if err != nil {
-      e := fmt.Sprintf("Unable to create falco rule from the config: %s", err)
-      http.Error(w, e, 500)
+			e := fmt.Sprintf("Unable to create falco rule from the config: %s", err)
+			http.Error(w, e, 500)
 			return
 		}
-    // verify that there are no running traces
-    /**
-     * We can have multiple falco processes running simultaneously tracing 
-     * multiple different entities. Therefore, we should be able to support tracing
-     * multiple entities at the same time. But we will keep things simple for now a
-     * and don't allow multiple simultaneous traces.
-    **/
-    if t.IsTracing {
-      e := fmt.Sprintf("There is a trace running already. Multiple simultaneous tracing is not yet supported.")
-      http.Error(w, e, 500)
-      return
-    }
+		// verify that there are no running traces
+		/**
+		 * We can have multiple falco processes running simultaneously tracing
+		 * multiple different entities. Therefore, we should be able to support tracing
+		 * multiple entities at the same time. But we will keep things simple for now a
+		 * and don't allow multiple simultaneous traces.
+		**/
+		if t.IsTracing {
+			e := fmt.Sprintf("There is a trace running already. Multiple simultaneous tracing is not yet supported.")
+			http.Error(w, e, 500)
+			return
+		}
 		fmt.Println("Starting to trace syscalls...")
 		// start tracer
 		err = t.Start()
 		if err != nil {
-      e := fmt.Sprintf("Unable to start tracer: %s", err)
-      http.Error(w, e, 500)
-      return
+			e := fmt.Sprintf("Unable to start tracer: %s", err)
+			http.Error(w, e, 500)
+			return
 		}
-    t.IsTracing = true
-    fmt.Fprint(w, "Successfully started tracing")
+		t.IsTracing = true
+		fmt.Fprint(w, "Successfully started tracing")
 	}
 }
 
@@ -61,8 +61,8 @@ func stopTraceHandler(t *tracing.Tracer) func(w http.ResponseWriter, r *http.Req
 		if err != nil {
 			panic(err)
 		}
-    t.IsTracing = false
-    fmt.Fprint(w, "Successfully stopped tracing")
+		t.IsTracing = false
+		fmt.Fprint(w, "Successfully stopped tracing")
 	}
 }
 

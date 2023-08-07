@@ -21,8 +21,8 @@ type TracingConfiguration struct {
 type Tracer struct {
 	falcoProcess *os.Process
 	Config       TracingConfiguration
-  IsTracing    bool
-} 
+	IsTracing    bool
+}
 
 func NewTracer() (Tracer, error) {
 	return Tracer{}, nil

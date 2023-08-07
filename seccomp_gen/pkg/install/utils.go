@@ -13,7 +13,6 @@ func BoolPointer(b bool) *bool {
 	return &b
 }
 
-
 func waitForJob(jobName string, client *kubernetes.Clientset) {
 	for range time.Tick(time.Second * 10) {
 		done, err := getJobStatus(jobName, client)
@@ -44,5 +43,3 @@ func getJobStatus(jobName string, k8sClient *kubernetes.Clientset) (bool, error)
 	}
 	return true, fmt.Errorf("%s has failed with error", job.Name)
 }
-
-

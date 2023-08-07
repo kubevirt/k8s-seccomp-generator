@@ -14,7 +14,6 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-
 // configures the nodes by deploying the `loader` manifest on the nodes and delete
 // them after configuring
 func ConfigureNodes(clientset *kubernetes.Clientset, distro Distro) error {
@@ -71,11 +70,11 @@ func ConfigureNodes(clientset *kubernetes.Clientset, distro Distro) error {
 		return fmt.Errorf("Cannot deploy the loader job: %s", err.Error())
 	}
 	fmt.Println("Waiting for the `loader` job to complete. This might take up to 6 mins...")
-  // TODO: Make sure there are no edge cases which leads to waiting forever
+	// TODO: Make sure there are no edge cases which leads to waiting forever
 	waitForJob("loader-job", clientset)
-  // delete the job after completion 
-  deletePolicy := metav1.DeletePropagationBackground
-  err = clientset.BatchV1().Jobs("default").Delete(context.TODO(), job.ObjectMeta.Name, metav1.DeleteOptions{PropagationPolicy: &deletePolicy })
+	// delete the job after completion
+	deletePolicy := metav1.DeletePropagationBackground
+	err = clientset.BatchV1().Jobs("default").Delete(context.TODO(), job.ObjectMeta.Name, metav1.DeleteOptions{PropagationPolicy: &deletePolicy})
 	if err != nil {
 		fmt.Printf("Cannot delete the loader job: %s", err.Error())
 	}
