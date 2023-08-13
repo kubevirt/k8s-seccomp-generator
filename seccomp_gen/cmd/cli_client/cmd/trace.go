@@ -13,11 +13,16 @@ import (
 	"github.com/sudo-NithishKarthik/syscalls-tracer/pkg/tracing"
 )
 
+const (
+  SYSCALLS_TRACER_POD_PORT = "30001"
+)
+
 var traceCommand = &cobra.Command{
 	Use:   "trace",
 	Short: "Trace the syscalls made by kubernetes pods",
 	Long:  `Trace the syscalls made by kubernetes pods`,
 }
+
 
 // TO BE IMPLEMENTED LATER
 func NewTraceAddCommand() *cobra.Command {
@@ -37,6 +42,36 @@ func NewTraceAddCommand() *cobra.Command {
 	return addCommand
 }
 
+func NewTraceStopCommand() *cobra.Command {
+    var stopCommand = &cobra.Command{
+		Use:   "stop",
+		Short: "Stops tracing ",
+		Long: `Stops tracing and sends the list of syscalls made by the pod`,
+		Run: func(cmd *cobra.Command, args []string) {
+      // 1, Send stop request
+      resp, err := http.Get("http://localhost:"+SYSCALLS_TRACER_POD_PORT+"/stop")
+			if err != nil {
+				fmt.Println("Cannot send the stop request: ", err)
+				return
+      }
+      // 2. Get data.json from the pod
+      resp, err = http.Get("http://localhost:"+SYSCALLS_TRACER_POD_PORT+"/data.json")
+			if err != nil {
+				fmt.Println("Cannot send the stop request: ", err)
+				return
+      }
+      syscalls := make([]byte, 0)
+      _, err = resp.Body.Read(syscalls)
+			if err != nil {
+				fmt.Println("Cannot read the response body: ", err)
+				return
+      }
+      fmt.Println(string(syscalls))
+    },
+}
+  return stopCommand
+}
+ 
 func NewTraceStartCommand() *cobra.Command {
 	var startCommand = &cobra.Command{
 		Use:   "start",
@@ -80,7 +115,7 @@ func NewTraceStartCommand() *cobra.Command {
 				fmt.Println("Cannot marshal the tracing configuration: ", err)
 				return
 			}
-			request, err := http.NewRequest("POST", "http://localhost:30001/start", bytes.NewBuffer(jsonBody))
+			request, err := http.NewRequest("POST", "http://localhost:"+ SYSCALLS_TRACER_POD_PORT +"/start", bytes.NewBuffer(jsonBody))
 			if err != nil {
 				fmt.Println("Cannot form the request: ", err)
 				return
@@ -126,5 +161,5 @@ func NewTraceCommand() *cobra.Command {
 }
 
 func init() {
-	traceCommand.AddCommand(NewTraceAddCommand(), NewTraceStartCommand())
+	traceCommand.AddCommand(NewTraceAddCommand(), NewTraceStartCommand(), NewTraceStopCommand())
 }
