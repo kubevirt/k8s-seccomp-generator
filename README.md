@@ -13,34 +13,39 @@ The Kubernetes Seccomp Generator is a tool designed to simplify the process of g
 ## Introduction
 
 Kuberentes Seccomp Generator uses [Falco](https://falco.org) to trace the syscalls made by the pod and uses that to generate seccomp profile for it. 
-Seccomp, short for Secure Computing Mode, is a Linux kernel feature that enables granular control over system calls made by processes. By employing Seccomp profiles, you can significantly reduce the attack surface of your pods by allowing only a specific set of syscalls necessary for their intended functionality.
+Seccomp, short for Secure Computing Mode, is a Linux kernel feature that enables granular control over system calls made by processes. By employing Seccomp profiles, we can significantly reduce the attack surface of your pods by allowing only a specific set of syscalls necessary for their intended functionality.
 
 ## Installation
 
-To install the Kubernetes Seccomp Generator, follow these steps:
+Install the secgen cli tool.
 
-1. Clone the repository from GitHub:
-
-   ```bash
-   git clone https://github.com/sudo-NithishKarthik/kubernetes-seccomp-generator.git
-   ```
-
-2. Change into the project directory:
-   ```bash
-   cd kubernetes-seccomp-generator
-   ```
-3. Deploy the required components on the cluster:
-   ```bash
-   scripts/install.sh $nodeos
-   ```
-
-   $nodeos here should be the OS distribution your nodes on the cluster uses. This tool currently only supports `centos-stream8`
-
+--TO BE UPDATED--
+ 
 ## Usage
 
 To use the Kubernetes Seccomp Generator, follow these steps:
 
---TO BE UPDATED--
+### 1. Install required components on the cluster
+
+`secgen install $node-os`
+
+This configures the node and installs the required components on the cluster.
+$node-os is the distribution of the operating system used on the node of the kuberentes cluster. Currently we only support `centos-stream8`, but this can be extended easily.
+
+### 2. Start tracing
+
+`secgen trace start $selector`
+
+This starts tracing the pod referred by the $selector.
+$selector can be 'pod.name=$name', 'container.name=$name' or 'pod.label.$label=$value'
+
+### 3. Stop tracing
+
+`secgen trace stop`
+
+This stops tracing and outputs the seccomp profile generated for the pod. 
+
+NOTE: Only single node clusters are supported. Support for multiple nodes will be added later.
 
 ## Contributing
 
@@ -48,3 +53,4 @@ We welcome contributions to the Kubernetes Seccomp Generator! If you encounter a
 
 ## License
 
+Apache License

@@ -14,6 +14,10 @@ import (
 	"github.com/sudo-NithishKarthik/syscalls-tracer/pkg/seccomp"
 )
 
+
+// TODO : Add support for multiple nodes
+// For multiple nodes, we need to first find a way for communication between the syscalls-tracer pod and the cli client
+
 const (
   SYSCALLS_TRACER_POD_PORT = "30001"
 )
@@ -104,8 +108,6 @@ func NewTraceStartCommand() *cobra.Command {
 		Long: `This tool stores a list of entities on which we can start
             the trace by doing 'secgen-cli trace start $selector' and it
             will start tracing the syscalls made by the entity denoted by the $selector`,
-    // TODO : Add support for multiple nodes
-    // For multiple nodes, we need to first find a way for communication between the syscalls-tracer pod and the cli client
 		Run: func(cmd *cobra.Command, args []string) {
 			// here we need the ability to communicate with the SYSCALLS_TRACER pod.
 			// We need to send a request to the pod.
@@ -156,7 +158,7 @@ func NewTraceStartCommand() *cobra.Command {
 			}
 			defer response.Body.Close()
 			body, _ := io.ReadAll(response.Body)
-			fmt.Println("response Body:", string(body))
+			fmt.Println("Started tracing...", string(body))
 		},
 		Args: func(cmd *cobra.Command, args []string) error {
 			// we need to verify whether the $selector is valid
