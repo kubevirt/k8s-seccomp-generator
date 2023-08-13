@@ -1,0 +1,12 @@
+# See the OWNERS docs at https://go.k8s.io/owners
+
+filters:
+  ".*":
+    reviewers:
+      - alicefr
+      - sudo-NithishKarthik
+      - xpivarc
+    approvers:
+      - alicefr
+      - sudo-NithishKarthik
+      - xpivarc

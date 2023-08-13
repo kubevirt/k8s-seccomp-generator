@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: falco-loader
+spec: 
+  volumes:
+    - name: var
+      hostPath:
+        path: /var
+    - name: usr
+      hostPath:
+        path: /usr
+    - name: lib
+      hostPath:
+        path: /lib
+    - name: etc
+      hostPath:
+        path: /etc
+  containers:
+    - name: probe-loader
+      image: nithishdev/falco-loader:centos-stream8
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: var
+          mountPath: /var
+        - name: usr
+          mountPath: /usr
+        - name: lib
+          mountPath: /lib
+        - name: etc
+          mountPath: /etc
+      securityContext: 
+        privileged: true
+
+
+
+
