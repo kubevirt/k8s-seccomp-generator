@@ -11,6 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/sudo-NithishKarthik/syscalls-tracer/pkg/tracing"
+	"github.com/sudo-NithishKarthik/syscalls-tracer/pkg/seccomp"
 )
 
 const (
@@ -60,13 +61,37 @@ func NewTraceStopCommand() *cobra.Command {
 				fmt.Println("Cannot send the stop request: ", err)
 				return
       }
-      syscalls := make([]byte, 0)
-      _, err = resp.Body.Read(syscalls)
+      syscallsData, err := io.ReadAll(resp.Body)
+      resp.Body.Close()
 			if err != nil {
 				fmt.Println("Cannot read the response body: ", err)
 				return
       }
-      fmt.Println(string(syscalls))
+      var syscalls []string
+      err = json.Unmarshal(syscallsData, &syscalls)
+			if err != nil {
+				fmt.Println("Cannot unmarshal syscalls data: ", err)
+				return
+      }
+      // 3. Generate seccomp profile from the syscalls
+      profile := seccomp.SeccompProfile{}
+      profile.DefaultAction = seccomp.ActErrno
+      archs := make([]seccomp.Arch, 0)
+      archs = append(archs, seccomp.ArchX86_64)
+      archs = append(archs, seccomp.ArchX86)
+      archs = append(archs, seccomp.ArchX32)
+      profile.Architectures = archs
+      
+      scalls := make([]seccomp.Syscall, 0)
+      for _, syscall := range syscalls {
+        s := seccomp.Syscall{}
+        s.Name = syscall
+        s.Action = seccomp.ActAllow
+        scalls = append(scalls, s)
+      }
+      profile.Syscalls = scalls 
+
+      fmt.Printf("Profile: %v", profile)
     },
 }
   return stopCommand
@@ -79,6 +104,8 @@ func NewTraceStartCommand() *cobra.Command {
 		Long: `This tool stores a list of entities on which we can start
             the trace by doing 'secgen-cli trace start $selector' and it
             will start tracing the syscalls made by the entity denoted by the $selector`,
+    // TODO : Add support for multiple nodes
+    // For multiple nodes, we need to first find a way for communication between the syscalls-tracer pod and the cli client
 		Run: func(cmd *cobra.Command, args []string) {
 			// here we need the ability to communicate with the SYSCALLS_TRACER pod.
 			// We need to send a request to the pod.
