@@ -1,3 +1,4 @@
+# Architecture
 
 This system design consists of two components: 
 1. Component A (In-Cluster Component)

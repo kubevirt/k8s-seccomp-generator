@@ -1,3 +1,5 @@
+# Different Approaches for Auditing Syscalls
+
 There are different approaches we can use to trace the syscalls:
 1. Kubernetes Seccomp profile (using the Log action)
 2. Using Strace, Kstrace or similar alternatives

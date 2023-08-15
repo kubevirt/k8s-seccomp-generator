@@ -1,3 +1,5 @@
+# Tracing Syscalls Using Falco
+
 We can use the Falco helm chart to install Falco on the cluster. The cluster being used here has a single node and the node has centos-stream8.
 
 Source: https://falco.org/docs/getting-started/installation/#centos-rhel

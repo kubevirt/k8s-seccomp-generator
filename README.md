@@ -15,6 +15,16 @@ The Kubernetes Seccomp Generator is a tool designed to simplify the process of g
 Kuberentes Seccomp Generator uses [Falco](https://falco.org) to trace the syscalls made by the pod and uses that to generate seccomp profile for it. 
 Seccomp, short for Secure Computing Mode, is a Linux kernel feature that enables granular control over system calls made by processes. By employing Seccomp profiles, we can significantly reduce the attack surface of your pods by allowing only a specific set of syscalls necessary for their intended functionality.
 
+## Problem Statement
+
+[Seccomp](https://man7.org/linux/man-pages/man2/seccomp.2.html), short for "secure computing mode," is a security feature in Linux operating systems that provides a way to restrict the system calls that a process can make. By limiting the set of allowed system calls, seccomp can help reduce the potential attack surface and improve the security of a system.
+
+Container engines like [Docker](https://www.docker.com/), [Podman](https://podman.io/) etc. allow us to limit the set of allowed syscalls by [applying a seccomp profile to a container](https://docs.docker.com/engine/security/seccomp/).  Container engines offer their own default seccomp profile. However, we cannot assume that one size fits all. Therefore, the default profile may either permit syscalls that are in fact not required by the workload or prohibit legitimate syscalls. 
+
+Kubernetes too allows us to apply Seccomp profiles loaded onto the node to the Pods and Containers - https://kubernetes.io/docs/tutorials/security/seccomp/ 
+
+In order to create an accurate seccomp profile for a pod, we need to know precisely what syscalls the pod will need throughout it's life cycle. We can get this list of syscalls by tracing the pod during it's runtime and mimicking what it will do through functional tests. This tool simplifies this process by providing an easy-to-use interface to generate seccomp profile for a Kubernetes pod.  
+
 ## Installation
 
 Install the secgen cli tool.
