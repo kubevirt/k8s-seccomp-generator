@@ -4,7 +4,6 @@ This system design consists of two components:
 1. Component A (In-Cluster Component)
 2. CLI Client
 
-
 ![alt text](https://github.com/kubevirt/k8s-seccomp-generator/blob/main/docs/DeploymentPlan.png?raw=true)
 
 Component A will be running as _1 per node_. 

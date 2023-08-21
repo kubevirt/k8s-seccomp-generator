@@ -9,7 +9,18 @@ Various methods can be employed to trace the syscalls initiated by a Kubernetes 
 
 ## Leveraging the Kubernetes Seccomp Profile Feature
 
-A seccomp profile can be crafted, employing the LOG action as its default behavior. The LOG action ensures the recording of all syscalls executed by the pod. This mechanism essentially relies on the [`seccomp-bpf`](https://www.kernel.org/doc/html/v4.16/userspace-api/seccomp_filter.html) filter mode, utilizing the [`prctl`](https://man7.org/linux/man-pages/man2/prctl.2.html) system call under the hood. This profile can be applied to the designated Kubernetes pod.
+[Seccomp](https://man7.org/linux/man-pages/man2/seccomp.2.html), short for "secure computing mode," is a security feature in Linux operating systems that provides a way to restrict the system calls that a process can make. By limiting the set of allowed system calls, seccomp can help reduce the potential attack surface and improve the security of a system.
+
+A seccomp profile can be crafted, employing the LOG action as its default behavior. 
+
+```json
+{
+    "defaultAction": "SCMP_ACT_LOG"
+}
+```
+The LOG action ensures the recording of all syscalls executed by the pod.
+
+This mechanism essentially relies on the [`seccomp-bpf`](https://www.kernel.org/doc/html/v4.16/userspace-api/seccomp_filter.html) filter mode, utilizing the [`prctl`](https://man7.org/linux/man-pages/man2/prctl.2.html) system call under the hood. This profile can be applied to the designated Kubernetes pod.
 
 The resulting syscall logs will be stored either within the `auditd` log file (/var/log/audit/audit.log) or the `syslog` file, contingent upon system configuration. If the system is running the Linux audit daemon, logs will default to the audit.log file; otherwise, they will be directed to the syslog file.
 
