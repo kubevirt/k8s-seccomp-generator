@@ -12,7 +12,5 @@ This section contains documents that review relevant technologies to this projec
 This folder contains a set of documents that discuss:
 1. [The different approaches available for tracing the syscalls](https://github.com/kubevirt/k8s-seccomp-generator/blob/main/docs/different-approaches-for-auditing-syscalls.md)
 2. [The architecture of the k8s-seccomp-generator tool](https://github.com/kubevirt/k8s-seccomp-generator/blob/main/docs/Architecture.md)
+3. [Configuring falco on Kubernetes cluster](https://github.com/kubevirt/k8s-seccomp-generator/blob/main/docs/configuring-falco-on-cluster.md)
 
-It also contains some of the findings from my research on:
-1. [Configuring falco on Kubernetes cluster](https://github.com/kubevirt/k8s-seccomp-generator/blob/main/docs/configuring-falco-on-cluster.md)
-2. [Tracing syscalls using falco](https://github.com/kubevirt/k8s-seccomp-generator/blob/main/docs/tracing-syscalls-using-falco.md)
