@@ -61,6 +61,8 @@ NOTE: Only single node clusters are supported. Support for multiple nodes will b
 
 We welcome contributions to the Kubernetes Seccomp Generator! If you encounter any issues, have suggestions for improvements, or would like to add new features, please feel free to open an issue or submit a pull request on the project's GitHub repository.
 
+Current progress and TODOs are being tracked here: https://github.com/kubevirt/k8s-seccomp-generator/issues/2
+
 ## License
 
 Apache License
