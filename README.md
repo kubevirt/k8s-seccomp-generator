@@ -1,6 +1,6 @@
 # Kubernetes Seccomp Generator
 
-The Kubernetes Seccomp Generator is a tool designed to simplify the process of generating Seccomp profiles for Kubernetes pods. It provides an intuitive interface for tracing the system calls made by a specific pod and automatically generates a corresponding Seccomp profile based on the observed syscalls.
+The Kubernetes Seccomp Generator is a tool designed to simplify the process of generating [Seccomp](https://man7.org/linux/man-pages/man2/seccomp.2.html) profiles for Kubernetes pods. It provides an intuitive interface for tracing the system calls made by a specific pod and automatically generates a corresponding Seccomp profile based on the observed syscalls.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ The Kubernetes Seccomp Generator is a tool designed to simplify the process of g
 Kuberentes Seccomp Generator uses [Falco](https://falco.org) to trace the syscalls made by the pod and uses that to generate seccomp profile for it. 
 Seccomp, short for Secure Computing Mode, is a Linux kernel feature that enables granular control over system calls made by processes. By employing Seccomp profiles, we can significantly reduce the attack surface of your pods by allowing only a specific set of syscalls necessary for their intended functionality.
 
-## Problem Statement
+## What does it solve?
 
 [Seccomp](https://man7.org/linux/man-pages/man2/seccomp.2.html), short for "secure computing mode," is a security feature in Linux operating systems that provides a way to restrict the system calls that a process can make. By limiting the set of allowed system calls, seccomp can help reduce the potential attack surface and improve the security of a system.
 
