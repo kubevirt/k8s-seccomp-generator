@@ -77,9 +77,50 @@ The accompanying 'probe_configurer.sh' script is as follows:
 #!/bin/bash
 dnf install -y kernel-devel-$(uname -r)
 dnf install -y make clang llvm
-mkdir -p /usr/_falco/falco && cp -R falco-0.35.0-x86_64/* /usr/_falco/falco/ && /usr/_falco/falco/usr/bin/falco-driver-loader bpf
+mkdir -p /usr/_falco/falco && cp -R falco-0.35.0
+
+-x86_64/* /usr/_falco/falco/ && /usr/_falco/falco/usr/bin/falco-driver-loader bpf
 ```
 
 To run this solution as a Kubernetes pod, key directories from the host file system (such as `/var`, `/usr`, `/lib`, and `/etc`) are mounted within the pod. This enables the direct installation of `kernel-modules` on the node, ensuring compatibility. The pod encompasses a privileged container ('probe-loader') responsible for configuring Falco by compiling the eBPF hook and conducting Falco installation on the node.
 
+To illustrate, here's the YAML configuration for the pod:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: falco-loader
+spec:
+  volumes:
+    - name: var
+      hostPath:
+        path: /var
+    - name: usr
+      hostPath:
+        path: /usr
+    - name: lib
+      hostPath:
+        path: /lib
+    - name: etc
+      hostPath:
+        path: /etc
+  containers:
+    - name: probe-loader
+      image: nithishdev/falco-loader:centos-stream8
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: var
+          mountPath: /var
+        - name: usr
+          mountPath: /usr
+        - name: lib
+          mountPath: /lib
+        - name: etc
+          mountPath: /etc
+      securityContext:
+        privileged: true
+```
+
 This pod offers a feasible approach for configuring Falco across all nodes within the cluster.
+
