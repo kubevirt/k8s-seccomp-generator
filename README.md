@@ -40,14 +40,14 @@ To use the Kubernetes Seccomp Generator, follow these steps:
 `secgen install $node-os`
 
 This configures the node and installs the required components on the cluster.
-$node-os is the distribution of the operating system used on the node of the kuberentes cluster. Currently we only support `centos-stream8`, but this can be extended easily.
+`$node-os` is the distribution of the operating system used on the node of the kuberentes cluster. Currently we only support `centos-stream8`, but this can be extended easily.
 
 ### 2. Start tracing
 
 `secgen trace start $selector`
 
-This starts tracing the pod referred by the $selector.
-$selector can be 'pod.name=$name', 'container.name=$name' or 'pod.label.$label=$value'
+This starts tracing the pod referred by the `$selector`.
+`$selector` can be `pod.name=$name`, `container.name=$name` or `pod.label.$label=$value`
 
 ### 3. Stop tracing
 
