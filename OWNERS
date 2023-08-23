@@ -4,9 +4,9 @@ filters:
   ".*":
     reviewers:
       - alicefr
-      - sudo-NithishKarthik
+      - humblenginr
       - xpivarc
     approvers:
       - alicefr
-      - sudo-NithishKarthik
+      - humblenginr
       - xpivarc
