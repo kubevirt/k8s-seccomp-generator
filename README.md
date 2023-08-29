@@ -2,6 +2,8 @@
 
 The Kubernetes Seccomp Generator is a tool designed to simplify the process of generating [Seccomp](https://man7.org/linux/man-pages/man2/seccomp.2.html) profiles for Kubernetes pods. It provides an intuitive interface for tracing the system calls made by a specific pod and automatically generates a corresponding Seccomp profile based on the observed syscalls.
 
+This project was initially started as part of the [Google Summer of Code 2023](https://summerofcode.withgoogle.com/) and the project description can be found in the community [issue](https://github.com/kubevirt/community/issues/205).
+
 ## Table of Contents
 
 - [Introduction](#introduction)
